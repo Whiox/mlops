@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir -r requirements-frontend.txt
 
 COPY . .
 
-CMD ["python", "-m", "streamlit", "run", ".\main.py", "--server.port", "10501"]
+CMD ["sh", "-c", "python -m streamlit run ./main.py --server.address 0.0.0.0 --server.port ${STREAMLIT_PORT:-10501}"]
