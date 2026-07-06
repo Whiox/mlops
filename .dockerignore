@@ -1,0 +1,10 @@
+*.log
+
+ollama/
+
+.env
+.example.env
+*.db
+
+.idea
+.idea/*

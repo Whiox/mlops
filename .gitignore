@@ -1,0 +1,9 @@
+*.log
+
+ollama/
+
+.env
+*.db
+
+.idea
+.idea/*

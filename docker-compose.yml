@@ -1,0 +1,40 @@
+
+services:
+  fast-api-app:
+    build:
+      context: backend/
+      dockerfile: Dockerfile-backend
+    ports:
+      - "${UVICORN_PORT}:${UVICORN_PORT}"
+    networks:
+      - existing-network
+    env_file:
+      - .env
+    environment:
+      UVICORN_PORT: "${UVICORN_PORT}"
+
+  streamlit-front-app:
+    build:
+      context: frontend/
+      dockerfile: Dockerfile-frontend
+    ports:
+      - "${STREAMLIT_PORT}:${STREAMLIT_PORT}"
+    networks:
+      - existing-network
+    env_file:
+      - .env
+    environment:
+      STREAMLIT_PORT: "${STREAMLIT_PORT}"
+
+  ollama-instance:
+    image: ollama/ollama
+    networks:
+      - existing-network
+    profiles:
+      - ollama
+
+
+networks:
+  existing-network:
+    external: True
+    name: ollama-network
