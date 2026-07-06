@@ -2,7 +2,7 @@
 services:
   fast-api-app:
     build:
-      context: backend/
+      context: ./backend
       dockerfile: Dockerfile-backend
     ports:
       - "${UVICORN_PORT}:${UVICORN_PORT}"
@@ -15,7 +15,7 @@ services:
 
   streamlit-front-app:
     build:
-      context: frontend/
+      context: ./frontend
       dockerfile: Dockerfile-frontend
     ports:
       - "${STREAMLIT_PORT}:${STREAMLIT_PORT}"
