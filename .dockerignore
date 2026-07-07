@@ -1,4 +1,6 @@
 *.log
+__pycache__/
+*.pyc
 
 ollama/
 
@@ -8,3 +10,5 @@ ollama/
 
 .idea
 .idea/*
+.venv
+.git

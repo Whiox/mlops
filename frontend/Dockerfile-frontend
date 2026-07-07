@@ -2,9 +2,9 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY requirements-frontend.txt .
+COPY ./frontend/requirements-frontend.txt .
 RUN pip install --no-cache-dir -r requirements-frontend.txt
 
-COPY . .
+COPY ./frontend .
 
 CMD ["sh", "-c", "python -m streamlit run ./main.py --server.address 0.0.0.0 --server.port ${STREAMLIT_PORT:-10501}"]

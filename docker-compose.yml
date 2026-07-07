@@ -2,8 +2,7 @@
 services:
   fast-api-app:
     build:
-      context: ./backend
-      dockerfile: Dockerfile-backend
+      dockerfile: ./backend/Dockerfile-backend
     ports:
       - "${UVICORN_PORT}:${UVICORN_PORT}"
     networks:
@@ -15,8 +14,7 @@ services:
 
   streamlit-front-app:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile-frontend
+      dockerfile: ./frontend/Dockerfile-frontend
     ports:
       - "${STREAMLIT_PORT}:${STREAMLIT_PORT}"
     networks:
@@ -32,6 +30,12 @@ services:
       - existing-network
     profiles:
       - ollama
+    volumes:
+      - ollama-data:/root/.ollama
+
+
+volumes:
+  ollama-data:
 
 
 networks:
