@@ -58,35 +58,6 @@ class Model:
 
         return messages
 
-    # def generate(self, context):
-    #     logger.info("Starting generation")
-    #
-    #     response = self.llm_with_tools.invoke(context)
-    #     context.append(response)
-    #
-    #     logger.info(f"TOOL CALLS: {response.tool_calls}")
-    #     logger.info(f"CONTENT: {response.content}")
-    #
-    #     if not response.tool_calls:
-    #         return str(response.content)
-    #
-    #     for tool_call in response.tool_calls:
-    #         tool = self.tools_by_name[tool_call["name"]]
-    #         result = tool.invoke(tool_call["args"])
-    #
-    #         context.append(
-    #             ToolMessage(
-    #                 content = str(result),
-    #                 tool_call_id = tool_call["id"],
-    #             )
-    #         )
-    #
-    #     logger.info(f"TOOL CALLS: {response.tool_calls}")
-    #     logger.info(f"CONTENT: {response.content}")
-    #
-    #     final_response = self.llm_with_tools.invoke(context)
-    #     return str(final_response.content)
-
     def stream_generate(self, context):
         for chunk in self.llm.stream(context):
             if chunk.content:
