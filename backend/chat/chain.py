@@ -26,9 +26,9 @@ class Model:
             temperature = 0,
         )
 
-        self.tools = [DuckDuckGoSearchResults()]
-        self.tools_by_name = {tool.name: tool for tool in self.tools}
-        self.llm_with_tools = self.llm.bind_tools(self.tools)
+        # self.tools = [DuckDuckGoSearchResults()]
+        # self.tools_by_name = {tool.name: tool for tool in self.tools}
+        # self.llm_with_tools = self.llm.bind_tools(self.tools)
 
     def create_chat_context(self, context: list[Message]):
         today = date.today().strftime("%d.%m.%Y")
@@ -58,34 +58,39 @@ class Model:
 
         return messages
 
-    def generate(self, context):
-        logger.info("Starting generation")
+    # def generate(self, context):
+    #     logger.info("Starting generation")
+    #
+    #     response = self.llm_with_tools.invoke(context)
+    #     context.append(response)
+    #
+    #     logger.info(f"TOOL CALLS: {response.tool_calls}")
+    #     logger.info(f"CONTENT: {response.content}")
+    #
+    #     if not response.tool_calls:
+    #         return str(response.content)
+    #
+    #     for tool_call in response.tool_calls:
+    #         tool = self.tools_by_name[tool_call["name"]]
+    #         result = tool.invoke(tool_call["args"])
+    #
+    #         context.append(
+    #             ToolMessage(
+    #                 content = str(result),
+    #                 tool_call_id = tool_call["id"],
+    #             )
+    #         )
+    #
+    #     logger.info(f"TOOL CALLS: {response.tool_calls}")
+    #     logger.info(f"CONTENT: {response.content}")
+    #
+    #     final_response = self.llm_with_tools.invoke(context)
+    #     return str(final_response.content)
 
-        response = self.llm_with_tools.invoke(context)
-        context.append(response)
-
-        logger.info(f"TOOL CALLS: {response.tool_calls}")
-        logger.info(f"CONTENT: {response.content}")
-
-        if not response.tool_calls:
-            return str(response.content)
-
-        for tool_call in response.tool_calls:
-            tool = self.tools_by_name[tool_call["name"]]
-            result = tool.invoke(tool_call["args"])
-
-            context.append(
-                ToolMessage(
-                    content = str(result),
-                    tool_call_id = tool_call["id"],
-                )
-            )
-
-        logger.info(f"TOOL CALLS: {response.tool_calls}")
-        logger.info(f"CONTENT: {response.content}")
-
-        final_response = self.llm_with_tools.invoke(context)
-        return str(final_response.content)
+    def stream_generate(self, context):
+        for chunk in self.llm.stream(context):
+            if chunk.content:
+                yield str(chunk.content)
 
 
 def get_llm() -> Model:

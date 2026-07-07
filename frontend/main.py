@@ -87,6 +87,21 @@ def generate_message(chat_id: int, message: dict):
     )
 
 
+def generate_message_stream(chat_id: int, message: dict):
+    with requests.post(
+        f"{API_URL}/chat/generate/{chat_id}/stream",
+        headers=auth_headers(),
+        json=message,
+        stream=True,
+        timeout=600,
+    ) as response:
+        response.raise_for_status()
+
+        for chunk in response.iter_content(chunk_size=None, decode_unicode=True):
+            if chunk:
+                yield chunk
+
+
 def init_state():
     defaults = {
         "token": None,
@@ -276,7 +291,13 @@ def show_chat():
         }
 
         with st.spinner("Генерирую ответ..."):
-            generate_message(chat["id"], user_message)
+            with st.chat_message("assistant"):
+                placeholder = st.empty()
+                full_text = ""
+
+                for token in generate_message_stream(chat["id"], user_message):
+                    full_text += token
+                    placeholder.write(full_text)
 
         load_messages(chat["id"])
         st.rerun()
