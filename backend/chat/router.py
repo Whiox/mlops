@@ -25,7 +25,7 @@ def get_chats(user: User = Depends(get_current_user), db: Session = Depends(get_
     return chats
 
 
-@router.post("/chats", response_model = ChatPrevSc)
+@router.post("/create", response_model = ChatPrevSc)
 def create_chat(
     payload: ChatCreateSc,
     user: User = Depends(get_current_user),
