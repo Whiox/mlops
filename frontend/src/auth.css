@@ -1,0 +1,84 @@
+
+:root {
+    --frame-bg: #1b1a1a;
+    --content-color: #353535;
+
+    --button-border-color: #535252;
+}
+
+
+#auth-page__centred {
+    width: 400px;
+    height: 400px;
+
+    border-radius: 20px;
+    border: 1px solid var(--button-border-color);
+    background-color: var(--frame-bg);
+
+    position: fixed;
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+}
+
+#auth-page__form {
+    padding: 40px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#auth-page__title {
+    margin: 0 auto;
+}
+
+.auth-page__input {
+    height: 40px;
+    width: 100%;
+
+    margin: 10px auto;
+
+    background-color: var(--content-color);
+    color: var(--text-color);
+
+    font-size: 16px;
+
+    outline: none;
+    border: 1px solid var(--button-border-color);
+    border-radius: 10px;
+}
+
+#auth-page__submit {
+    height: 40px;
+    width: 100%;
+
+    margin: 50px auto;
+
+    background-color: var(--content-color);
+    color: var(--text-color);
+
+    font-size: 16px;
+
+    outline: none;
+    border: 1px solid var(--button-border-color);
+    border-radius: 10px;
+}
+
+#auth-page__method__box {
+    display: flex;
+    justify-content: space-between;
+}
+
+.auth-page__method__button {
+    width: 100px;
+
+    padding: 10px;
+
+    background-color: var(--content-color);
+    color: var(--text-color);
+
+    outline: none;
+    border: 1px solid var(--button-border-color);
+    border-radius: 10px;
+}

@@ -17,3 +17,12 @@ body {
 h1, h2, p {
     color: var(--text-color);
 }
+
+html, body, #root {
+    height: 100%;
+    overflow: hidden;
+}
+
+main {
+    display: flex;
+}

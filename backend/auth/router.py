@@ -12,6 +12,7 @@ from database import get_db
 
 from auth.schemas import AuthUser, AuthStatus
 from auth.models import User
+from auth.depends import get_current_user
 
 
 router = APIRouter()
@@ -74,3 +75,7 @@ def post_login(payload: AuthUser, db: Session = Depends(get_db)):
         token = user.token,
         error = None,
     )
+
+@router.get("/check_token")
+def check_token(user: User = Depends(get_current_user)):
+    return {"status": "ok"}

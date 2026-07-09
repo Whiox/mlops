@@ -1,10 +1,34 @@
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from "react-router-dom";
 
 import "./chat.css";
 
 
 const API_URL = import.meta.env.VITE_REACT_API_URL;
-const token = localStorage.getItem("access_token");
+
+
+function authHeaders() {
+    const token = localStorage.getItem("access_token");
+
+    return {
+        Authorization: `Bearer ${token}`,
+    };
+}
+
+
+async function checkToken() {
+    const response = await fetch(
+        `${API_URL}/auth/check_token`,
+        {
+            method: "GET",
+            headers: {
+                ...authHeaders(),
+            },
+        },
+    );
+
+    return response.ok;
+}
 
 
 async function fetchChats() {
@@ -13,7 +37,7 @@ async function fetchChats() {
         {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${token}`
+                ...authHeaders(),
             },
         },
     );
@@ -28,7 +52,7 @@ async function createChat(title) {
         {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${token}`,
+                ...authHeaders(),
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(
@@ -49,7 +73,7 @@ async function fetchMessages(chatId){
         {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${token}`,
+                ...authHeaders(),
             },
         },
     );
@@ -64,7 +88,7 @@ async function streamMessage(chatId, text, onToken) {
         {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${token}`,
+                ...authHeaders(),
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(
@@ -94,6 +118,8 @@ async function streamMessage(chatId, text, onToken) {
 
 
 function Chat() {
+    const navigate = useNavigate();
+
     const [chats, setChats] = useState([]);
     const [newChatName, setNewChatName] = useState("");
 
@@ -104,17 +130,35 @@ function Chat() {
 
 
     useEffect(() => {
-        async function loadChats() {
+        async function loadPage() {
+            const isValidToken = await checkToken();
+
+            if (!isValidToken) {
+                localStorage.removeItem("access_token");
+                navigate("/auth");
+                return;
+            }
+
             const currentChats = await fetchChats();
             setChats(currentChats);
+            setChats(currentChats.reverse())
         }
 
-        loadChats();
-    }, []);
+        loadPage();
+    }, [navigate]);
 
-    async function handleNewChat() {
-        const newChat = await createChat(newChatName);
+    async function handleNewChat(event) {
+        event.preventDefault()
+
+        const title = newChatName.trim()
+
+        if (!title) {
+            return;
+        }
+
+        const newChat = await createChat(title);
         setChats([...chats, newChat]);
+        setNewChatName("")
     }
 
     async function handleChatChoice(chat) {
@@ -176,37 +220,35 @@ function Chat() {
     return (
         <main>
             <section id="chat-page__sidebar">
-                <h1>Чаты</h1>
+                <h1>MLops чат</h1>
 
-                <ul id="chat-page__sidebar__ul">
-                    {chats.map((chat) => (
-                    <li key={chat.id} className="chat-page__sidebar__li">
-                        <button
-                            className="chat-page__sidebar__li__button"
-                            title={chat.title}
-                            type="button"
-                            onClick={async () => handleChatChoice(chat)}
-                        >
-                            {chat.title}
-                        </button>
-                    </li>
-                ))}
-                </ul>
+                <div id="chat-page__sidebar__chats">
+                    <ul id="chat-page__sidebar__ul">
+                        {chats.map((chat) => (
+                        <li key={chat.id} className="chat-page__sidebar__li">
+                            <button
+                                className="chat-page__sidebar__li__button"
+                                title={chat.title}
+                                type="button"
+                                onClick={async () => handleChatChoice(chat)}
+                            >
+                                {chat.title}
+                            </button>
+                        </li>
+                    ))}
+                    </ul>
+                </div>
 
-                <form>
+                <form onSubmit={handleNewChat}>
                 <h2>Создать чат</h2>
 
-                <input
+                <input id="chat-page__sidebar__newchat"
                     value={newChatName}
                     onChange={
                         (event) => setNewChatName(event.target.value)
                     }
-                    placeholder="Новый чат"
+                    placeholder="Название"
                 />
-
-                <button type="button" onClick={handleNewChat}>
-                    Создать
-                </button>
             </form>
             </section>
 
@@ -234,8 +276,23 @@ function Chat() {
                             }
                             placeholder="Привет, Мир!"
                         />
-                        <button type="submit">
-                            o
+                        <button
+                            id="chat-page__chat__send"
+                            type="submit"
+                            disabled={!selectedChat || !messageToSend.trim()}
+                        >
+                            <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M6 8L2 8L2 6L8 5.24536e-07L14 6L14 8L10 8L10 16L6 16L6 8Z"
+                                    fill="#eae8e8"
+                                />
+                            </svg>
                         </button>
                     </div>
                 </form>

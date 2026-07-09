@@ -1,10 +1,15 @@
 import { useState } from 'react'
+import { useNavigate } from "react-router-dom";
+
+import "./auth.css";
 
 
 const API_URL = import.meta.env.VITE_REACT_API_URL;
 
 
 function Auth() {
+    const navigate = useNavigate();
+
     const [mode, setMode] = useState("login");
 
     const [username, setUsername] = useState("");
@@ -44,41 +49,58 @@ function Auth() {
         }
 
         localStorage.setItem("access_token", data.token);
+        navigate("/")
     }
 
     let submitButtonPlaceholder = mode === "login" ? "Войти" : "Создать аккаунт"
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input
-                value={username}
-                onChange={
-                    (event) => setUsername(event.target.value)
-                }
-                placeholder="Логин"
-            />
+        <div id="auth-page__centred">
+            <form id="auth-page__form" onSubmit={handleSubmit}>
+                <h2 id="auth-page__title">
+                    {mode === "login" ? "Войдите в аккаунт" : "Создайте аккаунт"}
+                </h2>
 
-            <input
-                value={password}
-                onChange={
-                    (event) => setPassword(event.target.value)
-                }
-                placeholder="Пароль"
-            />
+                <input
+                    className="auth-page__input"
+                    value={username}
+                    onChange={
+                        (event) => setUsername(event.target.value)
+                    }
+                    placeholder="Логин"
+                />
 
-            <button type="submit">{submitButtonPlaceholder}</button>
+                <input
+                    className="auth-page__input"
+                    value={password}
+                    onChange={
+                        (event) => setPassword(event.target.value)
+                    }
+                    placeholder="Пароль"
+                />
 
-            {error && <p>{error}</p>}
+                <button id="auth-page__submit" type="submit">{submitButtonPlaceholder}</button>
 
-            <div>
-                <button type="button" onClick={() => setMode("login")}>
-                    Вход
-                </button>
-                <button type="button" onClick={() => setMode("registration")}>
-                    Регистрация
-                </button>
-            </div>
-        </form>
+                {error && <p>{error}</p>}
+
+                <div id="auth-page__method__box">
+                    <button
+                        className="auth-page__method__button"
+                        type="button"
+                        onClick={() => setMode("login")}
+                    >
+                        Вход
+                    </button>
+                    <button
+                        className="auth-page__method__button"
+                        type="button"
+                        onClick={() => setMode("registration")}
+                    >
+                        Регистрация
+                    </button>
+                </div>
+            </form>
+        </div>
     )
 }
 
